@@ -1,0 +1,32 @@
+# Core web app
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-dotenv
+httpx
+requests
+
+# Data store: Neon Postgres + pgvector (D9)
+psycopg[binary]
+pgvector
+
+# Embeddings (D11) + LLM fallback chain (D10)
+cohere
+groq
+google-genai
+
+# Ingestion
+entsoe-py
+pandas
+feedparser
+beautifulsoup4
+
+# Reliability (retries: Neon cold start, API throttling)
+tenacity
+
+# Tests
+pytest
+
+# NOTE: loose pins for now. After Sprint 1 installs cleanly, run
+# `pip freeze > requirements.txt` to lock versions (reproducibility, U0.1).

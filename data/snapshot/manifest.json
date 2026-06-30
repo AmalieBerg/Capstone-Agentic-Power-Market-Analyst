@@ -1,0 +1,29 @@
+{
+  "frozen_at": "2026-06-25T12:45:15.410315Z",
+  "event_window": [
+    "2026-06-15",
+    "2026-06-22"
+  ],
+  "tables": {
+    "messages": {
+      "rows": 692,
+      "bytes": 771755
+    },
+    "chunks": {
+      "rows": 1000,
+      "bytes": 14632678
+    },
+    "events": {
+      "rows": 625,
+      "bytes": 198235
+    },
+    "news_zone_tags": {
+      "rows": 72,
+      "bytes": 5490
+    },
+    "entsoe_outages": {
+      "rows": 444,
+      "bytes": 282625
+    }
+  }
+}
