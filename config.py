@@ -62,14 +62,50 @@ ZONES = {
     "NO2": {"entsoe_area": "NO_2", "eic": "10YNO-2--------T"},
 }
 
+# RETIRED ON 2nd of July and replaced by GEO_TERMS below. Keep for reference until the end of the project: 
 # Zone keyword map for news tagging (U2.2) — country/TSO names, NOT EICs,
 # because journalistic text never uses REMIT asset codes.
-ZONE_KEYWORDS = {
+""" ZONE_KEYWORDS = {
     "DE-LU": ["german", "germany", "deutschland", "luxembourg",
               "50hertz", "amprion", "tennet", "transnetbw", "bundesnetzagentur"],
     "DK1":   ["denmark", "danish", "danmark", "jutland", "energinet"],
     "NO2":   ["norway", "norwegian", "norge", "statnett"],
+} """
+
+# --- Zone geography registry (single source of truth) ---
+# Read by BOTH news zone-tagging and retrieval zone-detection.
+# 'codes' are short/ambiguous (e.g. 'no2' == nitrogen dioxide), so they're used
+# ONLY to detect an explicitly-typed zone in a user query — never for scanning
+# article bodies. Add a zone later by adding an entry here; no code change.
+GEO_TERMS = {
+    "DE-LU": {
+        "names": ["german", "germany", "deutschland", "luxembourg"],
+        "tso":   ["50hertz", "amprion", "tennet", "transnetbw", "bundesnetzagentur"],
+        "codes": ["de-lu", "de_lu", "delu"],
+    },
+    "DK1": {
+        "names": ["denmark", "danish", "danmark", "jutland", "west denmark"],
+        "tso":   ["energinet"],
+        "codes": ["dk1"],
+    },
+    "NO2": {
+        "names": ["norway", "norwegian", "norge", "southern norway", "south norway"],
+        "tso":   ["statnett"],
+        "codes": ["no2"],
+    },
 }
+
+
+def zone_terms(zone: str, include_codes: bool = False) -> list[str]:
+    """Geography terms for a zone. include_codes=True adds ambiguous short codes
+    (for query detection); default False is safe for scanning article text."""
+    meta = GEO_TERMS.get(zone)
+    if not meta:
+        return [zone.lower()]
+    terms = list(meta["names"]) + list(meta["tso"])
+    if include_codes:
+        terms += meta.get("codes", [])
+    return terms
 
 # --- Retrieval / chunking (deterministic) ---
 TOP_K = 6

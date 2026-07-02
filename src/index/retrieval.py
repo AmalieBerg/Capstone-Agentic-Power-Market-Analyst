@@ -21,19 +21,14 @@ import config
 from src.index import embeddings
 from src.index.embeddings import to_pgvector
 
-_ZONE_ALIASES: dict[str, list[str]] = {
-    "DE-LU": ["de-lu", "de_lu", "delu", "german", "germany", "luxembourg"],
-    "NO2":   ["no2", "norway", "norwegian", "nordic", "south norway"],
-    "DK1":   ["dk1", "denmark", "danish", "west denmark"],
-}
 
 
 def detect_zones(question: str, known_zones: list[str]) -> list[str]:
-    """Canonical zones named in the question (subset of known_zones). Empty = all."""
+    """Canonical zones explicitly named in the question. Empty = search all zones."""
     q = (question or "").lower()
     found: list[str] = []
     for zone in known_zones:
-        aliases = _ZONE_ALIASES.get(zone, [zone.lower()])
+        aliases = config.zone_terms(zone, include_codes=True)   # codes OK: scanning a query
         if any(re.search(rf"(?<!\w){re.escape(a)}(?!\w)", q) for a in aliases):
             found.append(zone)
     return found
@@ -47,12 +42,15 @@ def search_chunks(conn, query_vec: list[float], zones=None, k: int = 24) -> list
         "SELECT c.message_id, c.zone, c.content, m.url, m.title, "
         "       1 - (c.embedding <=> %s::vector) AS score "
         "FROM chunks c JOIN messages m ON m.id = c.message_id "
-        "WHERE (%s::text[] IS NULL OR c.zone = ANY(%s)) "
+        "WHERE (%s::text[] IS NULL "
+        "       OR c.zone = ANY(%s) "
+        "       OR EXISTS (SELECT 1 FROM news_zone_tags t "
+        "                  WHERE t.message_id = c.message_id AND t.zone = ANY(%s))) "
         "ORDER BY c.embedding <=> %s::vector "
         "LIMIT %s"
     )
     with conn.cursor() as cur:
-        cur.execute(sql, (vec, zlist, zlist, vec, k))
+        cur.execute(sql, (vec, zlist, zlist, zlist, vec, k))
         cols = [d[0] for d in cur.description]
         return [dict(zip(cols, r)) for r in cur.fetchall()]
 
@@ -123,9 +121,14 @@ def merge_and_dedupe(chunk_hits: list[dict], events_by_id: dict[str, dict], limi
     return out
 
 
-def retrieve(conn, question: str, k: int = 8) -> list[dict]:
-    """Vector-first hybrid retrieval for one question."""
-    zones = detect_zones(question, list(config.ZONES)) or None
+def retrieve(conn, question: str, k: int = 8, zone: str | None = None) -> list[dict]:
+    """Vector-first hybrid retrieval for one question.
+
+    zone set   -> filter to that zone (explicit selection: UI dropdown / eval).
+    zone None  -> detect zone from the question text; if none named, search all
+                  zones (pan-European relevance mode).
+    """
+    zones = [zone] if zone else (detect_zones(question, list(config.ZONES)) or None)
     query_vec = embeddings.embed_query(question)
     hits = search_chunks(conn, query_vec, zones=zones, k=k * 3)  # overfetch for dedupe
     events = events_for_messages(conn, [h["message_id"] for h in hits])

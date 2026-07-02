@@ -1,25 +1,25 @@
 {
-  "frozen_at": "2026-06-25T12:45:15.410315Z",
+  "frozen_at": "2026-07-02T11:40:18.481004Z",
   "event_window": [
     "2026-06-15",
     "2026-06-22"
   ],
   "tables": {
     "messages": {
-      "rows": 692,
-      "bytes": 771755
+      "rows": 658,
+      "bytes": 564338
     },
     "chunks": {
-      "rows": 1000,
-      "bytes": 14632678
+      "rows": 747,
+      "bytes": 10864198
     },
     "events": {
       "rows": 625,
       "bytes": 198235
     },
     "news_zone_tags": {
-      "rows": 72,
-      "bytes": 5490
+      "rows": 15,
+      "bytes": 1141
     },
     "entsoe_outages": {
       "rows": 444,

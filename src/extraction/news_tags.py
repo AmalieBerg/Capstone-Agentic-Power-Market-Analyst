@@ -17,8 +17,9 @@ NEWS_SOURCES = {"gnews", "clew", "guardian"}
 def _zones_for_text(text: str) -> set[str]:
     blob = (text or "").lower()
     hits = set()
-    for zone, kws in config.ZONE_KEYWORDS.items():
-        if any(re.search(rf"\b{re.escape(kw)}\b", blob) for kw in kws):
+    for zone in config.GEO_TERMS:
+        terms = config.zone_terms(zone, include_codes=False)   # safe: no short codes
+        if any(re.search(rf"\b{re.escape(t)}\b", blob) for t in terms):
             hits.add(zone)
     return hits
 
@@ -31,8 +32,7 @@ def tag_news_zones(conn=None) -> int:
         news = [m for m in db.read_messages(conn) if m.get("source") in NEWS_SOURCES]
         pairs = set()
         for m in news:
-            zones = _zones_for_text(f"{m.get('title','')} {m.get('body','')}")
-            zones.add(m["zone"])                      # keep feed's own zone as baseline
+            zones = _zones_for_text(f"{m.get('title','')} {m.get('body','')}")                     # keep feed's own zone as baseline
             pairs |= {(m["id"], z) for z in zones if z in config.ZONES}
         n = db.upsert_news_zone_tags(conn, list(pairs))
         log.info("tagged %d news items -> %d (item,zone) pairs", len(news), n)

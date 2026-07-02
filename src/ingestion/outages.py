@@ -50,18 +50,33 @@ ENERGY_TERMS = ("energy", "electric", "power", "grid", "renewable",
                 "wind", "solar", "nuclear", "gas", "coal", "hydro",
                 "MW", "GW", "price", "outage", "capacity", "emission")
 
+# Power-system terms: at least one must appear (whole-word). These are
+# specific to electricity/power markets, excluding leaky macro terms
+# like "oil", "gas", "price", "energy" that pull in geopolitics/economics.
+POWER_TERMS = ("electricity", "electrical", "power plant", "power station",
+               "grid", "generation", "generator", "megawatt", "gigawatt",
+               "mw", "gw", "outage", "blackout", "renewable", "renewables",
+               "wind power", "wind farm", "solar", "photovoltaic", "nuclear",
+               "hydropower", "turbine", "transmission", "interconnector",
+               "power market", "day-ahead", "capacity market", "tso",
+               "power price", "electricity price", "power supply", "power grid")
+
+_POWER_RE = re.compile(
+    r"\b(" + "|".join(re.escape(t) for t in POWER_TERMS) + r")\b", re.IGNORECASE
+)
+
 
 def _is_energy_relevant(title: str, body: str) -> bool:
-    blob = f"{title} {body}".lower()
-    return any(t.lower() in blob for t in ENERGY_TERMS)
+    """News gate (short-summary sources: gnews, clew). Requires a whole-word
+    power-system term in title+summary. Rejects macro/geopolitics that merely
+    mention 'oil'/'gas'/'energy costs'."""
+    return bool(_POWER_RE.search(f"{title} {body}"))
 
 def _is_energy_headline(title: str, body: str) -> bool:
-    """Stricter gate for full-text sources (Guardian): the energy signal must be
-    in the title or lead (~first 400 chars), not buried anywhere in a long body —
-    avoids film/weather/politics articles that mention 'power'/'gas' incidentally."""
-    title_l = (title or "").lower()
-    lead = (body or "")[:400].lower()
-    return any(t.lower() in title_l or t.lower() in lead for t in ENERGY_TERMS)
+    """Stricter gate for full-text sources (Guardian): the power-system term
+    must appear in the title or lead (~first 400 chars), not deep in the body."""
+    lead = f"{title or ''} {(body or '')[:400]}"
+    return bool(_POWER_RE.search(lead))
 
 def _eic_index() -> dict[str, str]:
     """Map every in-scope bidding-zone / control-area EIC -> zone label."""

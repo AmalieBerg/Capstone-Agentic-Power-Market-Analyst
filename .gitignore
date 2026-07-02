@@ -7,3 +7,7 @@ __pycache__/
 *.egg-info/
 .DS_Store
 data/snapshots/*.local
+
+browse_corpus.py
+dryrun_gate.py
+test_zone_retrieve.py
