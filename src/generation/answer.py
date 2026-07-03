@@ -16,10 +16,12 @@ from src import llm
 
 _CITE = re.compile(r"\[(\d+)\]")
 
-# Below this top cosine score, treat the question as out-of-corpus and refuse.
-# Calibrate against the eval gold set (U8); 0.30 is a sane starting point given
-# relevant DE-LU matches score ~0.44 and off-target noise ~0.32.
-MIN_RELEVANCE = 0.30
+
+# Guardrail bands, calibrated against the U8 gold set (refusals ≤0.575,
+# answerable ≥0.613). A single cosine cutoff can't separate them (gap too
+# narrow), so the ambiguous band gets a semantic relevance check.
+RELEVANCE_LOW = 0.45    # below: refuse without LLM (clearly off-corpus)
+RELEVANCE_HIGH = 0.60   # above: answer without gate (clearly in-corpus)
 MAX_ANSWER_CHARS = 1500  # hard backstop on output length
 
 REFUSAL = (
@@ -45,6 +47,31 @@ def _describe_event(ev: dict) -> str:
     desc = ", ".join(bits)
     return f"{desc}; {window}" if window else desc
 
+def _passes_relevance_gate(question: str, items: list[dict], complete) -> bool:
+    """Ambiguous-band gate: refuse only if the question is clearly OUTSIDE scope
+    (different region/commodity/time), not merely because the snippets are a
+    partial answer. Scope = generation/transmission outages & power news for
+    DE-LU, DK1, NO2."""
+    ctx = "\n".join(
+        f"[{i+1}] {(it.get('content') or it.get('title') or '')[:300]}"
+        for i, it in enumerate(items[:5])
+    )
+    prompt = (
+        "You filter questions for a power-market assistant covering the DE-LU, DK1, "
+        "and NO2 bidding zones (Germany/Luxembourg, West Denmark, South Norway) and "
+        "the mid-2026 period. Answer NO only if the question is clearly OUT OF SCOPE: "
+        "a different region (e.g. Texas, Japan, Poland), a different commodity "
+        "(e.g. crypto, oil futures), or a different time period (e.g. 2023). "
+        "If the question is about power/outages/energy in the covered zones and the "
+        "sources are at all related, answer YES even if they only partially answer it. "
+        "Reply with ONLY 'YES' or 'NO'.\n\n"
+        f"SOURCES:\n{ctx}\n\nQUESTION: {question}\n\nIn scope (YES/NO):"
+    )
+    try:
+        return not (complete(prompt) or "").strip().upper().startswith("NO")
+    except Exception:
+        return True
+
 
 def format_context(items: list[dict], max_chars: int = 400) -> tuple[str, list[dict]]:
     """Numbered context block + parallel sources list (1-indexed, with snippets)."""
@@ -59,6 +86,7 @@ def format_context(items: list[dict], max_chars: int = 400) -> tuple[str, list[d
         lines.append(f"[{i}] ({zone}) {head}. {snippet}".rstrip())
         sources.append({
             "index": i,
+            "message_id": item.get("message_id"),
             "source_url": item.get("source_url") or "",
             "label": (ev.get("asset") if ev else item.get("title")) or "source",
             "zone": item.get("zone"),
@@ -94,23 +122,29 @@ def _top_score(items: list[dict]) -> float:
     return max(scores) if scores else 0.0
 
 
-def generate(question: str, items: list[dict], complete=llm.complete,
-             min_relevance: float = MIN_RELEVANCE) -> dict:
-    """Format -> guardrail -> prompt -> LLM -> cited, capped answer."""
-    # Guardrail: refuse out-of-corpus before spending an LLM call.
-    if not items or _top_score(items) < min_relevance:
+def generate(question: str, items: list[dict], complete=llm.complete) -> dict:
+    """Format -> banded guardrail -> prompt -> LLM -> cited, capped answer."""
+    top = _top_score(items)
+    # Band 1: clearly off-corpus -> refuse, no LLM
+    if not items or top < RELEVANCE_LOW:
         return {"answer": REFUSAL, "sources": [], "citations": [], "refused": True}
-
+    # Band 2 (ambiguous): semantic gate decides
+    if top < RELEVANCE_HIGH and not _passes_relevance_gate(question, items, complete):
+        return {"answer": REFUSAL, "sources": [], "citations": [], "refused": True}
+    # Band 3 (or gate passed): answer
     context_text, sources = format_context(items)
     prompt = build_answer_prompt(question, context_text)
-    answer = complete(prompt)
-    if len(answer) > MAX_ANSWER_CHARS:          # hard length cap backstop
+    try:
+        answer = complete(prompt)
+    except Exception:
+        return {"answer": "The analysis service is temporarily unavailable (LLM rate limit). Please try again shortly.", "sources": [], "citations": [], "refused": False, "error": "llm_unavailable"}
+    if len(answer) > MAX_ANSWER_CHARS:
         answer = answer[:MAX_ANSWER_CHARS].rstrip() + "…"
     return {"answer": answer, "sources": sources,
             "citations": extract_citations(answer, sources), "refused": False}
 
 
-def answer_question(conn, question: str, k: int = 6, complete=llm.complete) -> dict:
+def answer_question(conn, question: str, k: int = 6, complete=llm.complete, zone: str | None = None) -> dict:
     """End-to-end: retrieve then generate a cited, guarded answer."""
-    items = retrieval.retrieve(conn, question, k=k)
+    items = retrieval.retrieve(conn, question, k=k, zone=zone)
     return generate(question, items, complete=complete)

@@ -23,6 +23,7 @@ app = FastAPI(title="Agentic Power-Market Analyst", version="1.0")
 class ChatRequest(BaseModel):
     question: str
     k: int = 6
+    zone: str | None = None
 
 
 def shape_response(question: str, result: dict) -> dict:
@@ -33,13 +34,15 @@ def shape_response(question: str, result: dict) -> dict:
         "refused": result.get("refused", False),
         "citations": [
             {"index": c.get("index"), "label": c.get("label"),
-             "zone": c.get("zone"), "source_url": c.get("source_url")}
+             "zone": c.get("zone"), "source_url": c.get("source_url"),
+             "message_id": c.get("message_id")}
             for c in result.get("citations", [])
         ],
         "snippets": [
             {"index": s.get("index"), "label": s.get("label"),
              "zone": s.get("zone"), "snippet": s.get("snippet"),
-             "source_url": s.get("source_url")}
+             "source_url": s.get("source_url"),
+             }
             for s in result.get("sources", [])
         ],
     }
@@ -54,7 +57,7 @@ def health() -> dict:
 def chat(req: ChatRequest) -> dict:
     conn = db.get_connection()
     try:
-        result = answer.answer_question(conn, req.question, k=req.k)
+        result = answer.answer_question(conn, req.question, k=req.k, zone=req.zone)
     finally:
         conn.close()
     return shape_response(req.question, result)
