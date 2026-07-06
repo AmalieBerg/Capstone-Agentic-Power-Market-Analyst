@@ -26,6 +26,21 @@ from collections import defaultdict
 
 import requests
 
+def load_asset_map(events_path: str = "data/snapshot/events.jsonl") -> dict:
+    """message_id -> asset, so citation scoring can credit sibling messages of the
+    same physical asset (structured outages have many revised messages per unit)."""
+    amap = {}
+    try:
+        with open(events_path, encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    d = json.loads(line)
+                    a = d.get("asset")
+                    if a and a != "unknown unit":
+                        amap[d.get("source_id")] = a
+    except FileNotFoundError:
+        pass
+    return amap
 
 def load_gold(path: str) -> list[dict]:
     with open(path, encoding="utf-8") as fh:
@@ -51,12 +66,19 @@ def score_facts(answer: str, facts: list[str]) -> float:
     return hits / len(facts)
 
 
-def citation_hit(resp: dict, gold_ids: list[str]) -> bool:
+def citation_hit(resp: dict, gold_ids: list, asset_map: dict) -> bool:
+    """Credit a hit if any returned citation is (a) an exact gold message id, OR
+    (b) a message describing the SAME asset as a gold message. (b) avoids
+    penalising retrieval for choosing a valid sibling of a revised outage."""
     if not gold_ids:
-        return True  # n/a for refusals
+        return True  # refusals: n/a
     got = {c.get("message_id") for c in resp.get("citations", [])}
     got |= {s.get("message_id") for s in resp.get("snippets", [])}
-    return any(g in got for g in gold_ids)
+    if any(g in got for g in gold_ids):
+        return True
+    gold_assets = {asset_map.get(g) for g in gold_ids if asset_map.get(g)}
+    got_assets = {asset_map.get(m) for m in got if asset_map.get(m)}
+    return bool(gold_assets & got_assets)
 
 
 def judge_groundedness(question: str, answer: str, snippets: list[dict]) -> float | None:
@@ -84,6 +106,7 @@ def judge_groundedness(question: str, answer: str, snippets: list[dict]) -> floa
 def run(url: str, gold: list[dict], mode: str, judge: bool) -> dict:
     """mode: 'explicit' passes gold zone; 'inferred' passes no zone."""
     rows = []
+    asset_map = load_asset_map()
     for g in gold:
         zone = g.get("zone") if mode == "explicit" else None
         try:
@@ -97,7 +120,7 @@ def run(url: str, gold: list[dict], mode: str, judge: bool) -> dict:
             "category": g["category"],
             "latency": dt,
             "refusal_correct": refused == bool(g["must_refuse"]),
-            "citation_hit": citation_hit(resp, g["gold_message_ids"]),
+            "citation_hit": citation_hit(resp, g["gold_message_ids"], asset_map),   # add asset_map arg
             "fact_match": 1.0 if g["must_refuse"] else score_facts(resp.get("answer", ""), g["expected_facts"]),
             "refused": refused,
         }

@@ -1,0 +1,274 @@
+{
+  "explicit": [
+    {
+      "id": "q01",
+      "category": "structured_outage",
+      "latency": 3.4138218000007328,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q02",
+      "category": "structured_outage",
+      "latency": 1.5095297000079881,
+      "refusal_correct": true,
+      "citation_hit": false,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q03",
+      "category": "structured_outage",
+      "latency": 2.0585250000003725,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q04",
+      "category": "structured_outage",
+      "latency": 1.2168100000126287,
+      "refusal_correct": false,
+      "citation_hit": false,
+      "fact_match": 0.0,
+      "refused": true
+    },
+    {
+      "id": "q05",
+      "category": "structured_outage",
+      "latency": 2.025333199999295,
+      "refusal_correct": true,
+      "citation_hit": false,
+      "fact_match": 0.0,
+      "refused": false
+    },
+    {
+      "id": "q06",
+      "category": "structured_outage",
+      "latency": 2.0584263000055216,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q07",
+      "category": "structured_outage",
+      "latency": 8.985973400005605,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q08",
+      "category": "freetext_umm",
+      "latency": 5.755390200007241,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q09",
+      "category": "freetext_umm",
+      "latency": 5.421953700017184,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q10",
+      "category": "freetext_umm",
+      "latency": 3.4131973999901675,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 0.5,
+      "refused": false
+    },
+    {
+      "id": "q11",
+      "category": "freetext_umm",
+      "latency": 13.085767799988389,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q12",
+      "category": "freetext_umm",
+      "latency": 1.6705474999907892,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q13",
+      "category": "freetext_umm",
+      "latency": 1.6907830999989528,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 0.6666666666666666,
+      "refused": false
+    },
+    {
+      "id": "q14",
+      "category": "freetext_umm",
+      "latency": 4.86395800000173,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 0.5,
+      "refused": false
+    },
+    {
+      "id": "q15",
+      "category": "cross_zonal",
+      "latency": 9.18675599998096,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q16",
+      "category": "cross_zonal",
+      "latency": 6.390897100005532,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q17",
+      "category": "cross_zonal",
+      "latency": 9.749637400003849,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 0.5,
+      "refused": false
+    },
+    {
+      "id": "q18",
+      "category": "cross_zonal",
+      "latency": 3.4736710999859497,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q19",
+      "category": "cross_zonal",
+      "latency": 8.28543570000329,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q20",
+      "category": "structured_outage",
+      "latency": 8.858292500022799,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q21",
+      "category": "freetext_umm",
+      "latency": 1.579903200006811,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 0.5,
+      "refused": false
+    },
+    {
+      "id": "q22",
+      "category": "cross_zonal",
+      "latency": 5.812657000002218,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q23",
+      "category": "news",
+      "latency": 4.798368399991887,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q24",
+      "category": "news",
+      "latency": 3.8833961999916937,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q25",
+      "category": "news",
+      "latency": 6.503773000004003,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": false
+    },
+    {
+      "id": "q26",
+      "category": "refusal",
+      "latency": 7.76498099998571,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": true
+    },
+    {
+      "id": "q27",
+      "category": "refusal",
+      "latency": 1.4389769000117667,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": true
+    },
+    {
+      "id": "q28",
+      "category": "refusal",
+      "latency": 1.7743120999948587,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": true
+    },
+    {
+      "id": "q29",
+      "category": "refusal",
+      "latency": 1.4017163999960758,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": true
+    },
+    {
+      "id": "q30",
+      "category": "refusal",
+      "latency": 1.6069906000047922,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": true
+    }
+  ]
+}
