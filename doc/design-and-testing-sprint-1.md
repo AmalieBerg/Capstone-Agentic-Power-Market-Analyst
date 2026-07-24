@@ -52,7 +52,7 @@ store and relational store into one system. Tables:
 ### 2.3 External services
 
 - **Embeddings:** Cohere `embed-multilingual-v3.0` (1024-dim; the corpus mixes EN/DE/NO/DK).
-- **LLM:** Groq (`llama-3.3-70b-versatile`) primary, Google Gemini (`gemini-2.5-flash`, `google-genai`
+- **LLM:** Groq (`openai/gpt-oss-120b`) primary, Google Gemini (`gemini-2.5-flash`, `google-genai`
   SDK) fallback on rate-limit, with an in-process response cache.
 - **Deployment:** Render (web service) running `uvicorn app:app`; GitHub Actions for CI.
 
