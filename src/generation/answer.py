@@ -47,7 +47,7 @@ def _describe_event(ev: dict) -> str:
     desc = ", ".join(bits)
     return f"{desc}; {window}" if window else desc
 
-def _passes_relevance_gate(question: str, items: list[dict], complete) -> bool:
+def passes_relevance_gate(question: str, items: list[dict], complete) -> bool:
     """Ambiguous-band gate: refuse only if the question is clearly OUTSIDE scope
     (different region/commodity/time), not merely because the snippets are a
     partial answer. Scope = generation/transmission outages & power news for
@@ -117,19 +117,19 @@ def extract_citations(answer_text: str, sources: list[dict]) -> list[dict]:
     return [by_index[n] for n in seen]
 
 
-def _top_score(items: list[dict]) -> float:
+def top_score(items: list[dict]) -> float:
     scores = [i["score"] for i in items if i.get("score") is not None]
     return max(scores) if scores else 0.0
 
 
 def generate(question: str, items: list[dict], complete=llm.complete) -> dict:
     """Format -> banded guardrail -> prompt -> LLM -> cited, capped answer."""
-    top = _top_score(items)
+    top = top_score(items)
     # Band 1: clearly off-corpus -> refuse, no LLM
     if not items or top < RELEVANCE_LOW:
         return {"answer": REFUSAL, "sources": [], "citations": [], "refused": True}
     # Band 2 (ambiguous): semantic gate decides
-    if top < RELEVANCE_HIGH and not _passes_relevance_gate(question, items, complete):
+    if top < RELEVANCE_HIGH and not passes_relevance_gate(question, items, complete):
         return {"answer": REFUSAL, "sources": [], "citations": [], "refused": True}
     # Band 3 (or gate passed): answer
     context_text, sources = format_context(items)

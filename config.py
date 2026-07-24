@@ -115,7 +115,7 @@ EMBED_DOC_INPUT_TYPE = "search_document"    # embedding corpus chunks
 EMBED_QUERY_INPUT_TYPE = "search_query"     # embedding user questions
 
 # --- LLM fallback chain (D10) ---
-LLM_PRIMARY = {"provider": "groq", "model": "llama-3.3-70b-versatile"}
+LLM_PRIMARY = {"provider": "groq", "model": "openai/gpt-oss-120b"}
 LLM_FALLBACK = {"provider": "gemini", "model": "gemini-2.5-flash"}
 
 # --- Frozen eval snapshot window (U1.4) — single source of truth ---

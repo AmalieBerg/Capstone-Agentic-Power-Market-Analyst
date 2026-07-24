@@ -16,7 +16,7 @@ import config
 
 logger = logging.getLogger(__name__)
 
-GROQ_MODEL = getattr(config, "GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_MODEL = getattr(config, "GROQ_MODEL", "openai/gpt-oss-120b")
 GEMINI_MODEL = getattr(config, "GEMINI_MODEL", "gemini-2.5-flash")
 
 _CACHE: dict[str, str] = {}

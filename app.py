@@ -17,6 +17,8 @@ from pydantic import BaseModel
 from src.index import db
 from src.generation import answer
 
+import logging
+
 app = FastAPI(title="Agentic Power-Market Analyst", version="1.0")
 
 
@@ -32,6 +34,7 @@ def shape_response(question: str, result: dict) -> dict:
         "question": question,
         "answer": result.get("answer", ""),
         "refused": result.get("refused", False),
+        "used_tool": result.get("used_tool", False),
         "citations": [
             {"index": c.get("index"), "label": c.get("label"),
              "zone": c.get("zone"), "source_url": c.get("source_url"),
@@ -53,14 +56,24 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+log = logging.getLogger(__name__)
+
 @app.post("/chat")
 def chat(req: ChatRequest) -> dict:
     conn = db.get_connection()
     try:
-        result = answer.answer_question(conn, req.question, k=req.k, zone=req.zone)
+        try:
+            from src.agent import run_agent
+            result = run_agent(req.question, conn, k=req.k, zone=req.zone)
+        except Exception:
+            log.exception("agent layer failed, falling back to retrieval-only")
+            result = answer.answer_question(conn, req.question, k=req.k, zone=req.zone)
     finally:
         conn.close()
     return shape_response(req.question, result)
+
+
+
 
 
 @app.get("/", response_class=HTMLResponse)

@@ -28,5 +28,11 @@ tenacity
 # Tests
 pytest
 
+# Orchestration 
+langchain-core
+langchain-groq
+langchain-google-genai
+
 # NOTE: loose pins for now. After Sprint 1 installs cleanly, run
 # `pip freeze > requirements.txt` to lock versions (reproducibility, U0.1).
+
