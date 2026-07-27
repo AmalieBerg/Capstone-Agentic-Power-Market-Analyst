@@ -14,7 +14,7 @@ import re
 from src.index import retrieval
 from src import llm
 
-_CITE = re.compile(r"\[(\d+)\]")
+_CITE = re.compile(r"[\[【](\d+)[\]】]")
 
 
 # Guardrail bands, calibrated against the U8 gold set (refusals ≤0.575,
@@ -98,8 +98,8 @@ def format_context(items: list[dict], max_chars: int = 400) -> tuple[str, list[d
 def build_answer_prompt(question: str, context_text: str) -> str:
     return (
         "You are a power-market analyst assistant. Answer the question using ONLY "
-        "the numbered sources below. Cite every claim inline with its source number "
-        "like [1] or [2]. Answer concisely, in at most ~150 words. If the sources do "
+        "the numbered sources below. Cite every claim inline with its source number using ONLY plain ASCII square brackets, exactly "
+        "like [1] or [2], not full-width or any other bracket style. Answer concisely, in at most ~150 words. If the sources do "
         "not contain enough information to answer, say so plainly instead of guessing.\n\n"
         f"Sources:\n{context_text}\n\n"
         f"Question: {question}\n\n"

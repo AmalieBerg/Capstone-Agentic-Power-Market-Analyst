@@ -83,10 +83,13 @@ class EntsoeClient:
 
     # -- throttled + retried API call ------------------------------------- #
     def _call(self, fn, area, start, end):
-        from tenacity import retry, stop_after_attempt, wait_exponential
+        from entsoe.exceptions import NoMatchingDataError
+        from tenacity import retry, retry_if_not_exception_type, stop_after_attempt, wait_exponential
 
         @retry(wait=wait_exponential(multiplier=1, max=10),
-               stop=stop_after_attempt(3), reraise=True)
+               stop=stop_after_attempt(3), 
+               retry=retry_if_not_exception_type(NoMatchingDataError),
+               reraise=True)
         def go():
             global _last_call_ts
             wait = _MIN_INTERVAL_S - (time.monotonic() - _last_call_ts)
