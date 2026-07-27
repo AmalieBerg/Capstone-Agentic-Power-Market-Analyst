@@ -15,3 +15,6 @@ for label, result in [("LIVE PRICE", r1), ("JUNE OUTAGES", r2), ("TEXAS (should 
     print("USED TOOL:", result.get("used_tool"))
     print("CITATIONS:", result["citations"])
     print("REFUSED:", result["refused"])
+
+if __name__ == "__main__":
+    main()
