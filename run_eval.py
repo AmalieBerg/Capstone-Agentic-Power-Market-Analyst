@@ -23,8 +23,41 @@ import json
 import statistics
 import time
 from collections import defaultdict
-
+import re
+from datetime import datetime, timezone
 import requests
+
+PLAUSIBLE_RANGE_DEFAULT = (-1e9, 1e9)
+
+
+def plausibility_pass(gold: dict, resp: dict) -> bool | None:
+    if gold.get("category") != "live_numeric":
+        return None
+    tool_result = resp.get("tool_result")
+    if not tool_result:
+        return False
+    lo, hi = gold.get("plausible_range", PLAUSIBLE_RANGE_DEFAULT)
+    now = datetime.now(timezone.utc)
+    found_any = False
+    for zone, series_map in tool_result.items():
+        if not isinstance(series_map, dict):
+            continue
+        for series_name, point in series_map.items():
+            if not isinstance(point, dict) or "value" not in point:
+                continue
+            found_any = True
+            val = point["value"]
+            if not (lo <= val <= hi):
+                return False
+            try:
+                ts = datetime.fromisoformat(point["ts"])
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                if not (0 <= (now - ts).total_seconds() / 3600 <= 24):
+                    return False
+            except Exception:
+                return False
+    return found_any
 
 def load_asset_map(events_path: str = "data/snapshot/events.jsonl") -> dict:
     """message_id -> asset, so citation scoring can credit sibling messages of the
@@ -123,6 +156,8 @@ def run(url: str, gold: list[dict], mode: str, judge: bool) -> dict:
             "citation_hit": citation_hit(resp, g["gold_message_ids"], asset_map),   # add asset_map arg
             "fact_match": 1.0 if g["must_refuse"] else score_facts(resp.get("answer", ""), g["expected_facts"]),
             "refused": refused,
+            "tool_selection_correct": bool(resp.get("used_tool", False)) == bool(g.get("expected_used_tool", False)),
+            "plausibility_pass": plausibility_pass(g, resp),
         }
         if judge and not g["must_refuse"] and not refused:
             rec["groundedness"] = judge_groundedness(
@@ -148,6 +183,7 @@ def summarize(rows: list[dict], mode: str) -> dict:
     print(f"  refusal_correct : {frac('refusal_correct'):.2f}")
     print(f"  citation_hit    : {frac('citation_hit'):.2f}   (retrieval recall)")
     print(f"  fact_match      : {frac('fact_match'):.2f}")
+    print(f"  tool_selection  : {frac('tool_selection_correct'):.2f}")
     g = [r['groundedness'] for r in ok if r.get('groundedness') is not None]
     if g:
         print(f"  groundedness    : {statistics.mean(g):.2f}   (LLM-judged, n={len(g)})")
@@ -156,14 +192,20 @@ def summarize(rows: list[dict], mode: str) -> dict:
         p95 = sorted(lat)[max(0, int(len(lat)*0.95)-1)]
         print(f"  latency p50/p95 : {p50:.2f}s / {p95:.2f}s")
     print("  --- by category ---")
-    for cat in ("structured_outage", "freetext_umm", "cross_zonal", "news", "refusal"):
+    for cat in ("structured_outage", "freetext_umm", "cross_zonal", "news", "refusal", "live_numeric"):
         cr = by_cat.get(cat, [])
         if not cr:
             continue
-        ch = sum(r["citation_hit"] for r in cr) / len(cr)
-        fm = sum(r["fact_match"] for r in cr) / len(cr)
-        rf = sum(r["refusal_correct"] for r in cr) / len(cr)
-        print(f"  {cat:18s} n={len(cr):2d}  cite={ch:.2f} fact={fm:.2f} refuse_ok={rf:.2f}")
+        if cat == "live_numeric":
+            pp = [r["plausibility_pass"] for r in cr if r.get("plausibility_pass") is not None]
+            ts = sum(r["tool_selection_correct"] for r in cr) / len(cr)
+            plaus = sum(pp) / len(pp) if pp else float("nan")
+            print(f"  {cat:18s} n={len(cr):2d}  tool_ok={ts:.2f} plausible={plaus:.2f}")
+        else:
+            ch = sum(r["citation_hit"] for r in cr) / len(cr)
+            fm = sum(r["fact_match"] for r in cr) / len(cr)
+            rf = sum(r["refusal_correct"] for r in cr) / len(cr)
+            print(f"  {cat:18s} n={len(cr):2d}  cite={ch:.2f} fact={fm:.2f} refuse_ok={rf:.2f}")
     if errs:
         print("  --- errors ---")
         for r in errs:

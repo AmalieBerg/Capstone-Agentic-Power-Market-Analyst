@@ -91,8 +91,8 @@ TOOLS = [get_entsoe_numeric]
 
 
 def _build_llm():
-    primary = ChatGroq(model=config.LLM_PRIMARY["model"]).bind_tools(TOOLS)
-    fallback = ChatGoogleGenerativeAI(model=config.LLM_FALLBACK["model"])
+    primary = ChatGroq(model=config.LLM_PRIMARY["model"], temperature=0).bind_tools(TOOLS)
+    fallback = ChatGoogleGenerativeAI(model=config.LLM_FALLBACK["model"], temperature=0)
     return primary.with_fallbacks([fallback])
 
 
@@ -120,23 +120,57 @@ def _build_agent_prompt(question: str, context_text: str) -> str:
         "Answer (cite sources as [n]; label live tool data explicitly):"
     )
 
+def passes_agent_relevance_gate(question: str, items: list[dict], complete) -> bool:
+    """Agent-aware scope gate: in-scope if about power/outages/energy in
+    DE-LU/DK1/NO2 -- via text corpus OR the live numeric tool, even with a
+    thin/empty text match. Still refuses when the question's real subject is
+    outside the covered zones, even if a covered zone is mentioned
+    incidentally (e.g. one side of a cross-border interconnector)."""
+    ctx = "\n".join(
+        f"[{i+1}] {(it.get('content') or it.get('title') or '')[:300]}"
+        for i, it in enumerate(items[:5])
+    )
+    prompt = (
+        "You filter questions for a power-market assistant covering ONLY the "
+        "DE-LU, DK1, and NO2 bidding zones (Germany/Luxembourg, West Denmark, "
+        "South Norway) for mid-2026, with access to historical outage/news "
+        "sources AND a live tool for current price/generation/load/wind-solar "
+        "figures in those zones. Answer NO if the question's main subject is a "
+        "different region not in this list (e.g. Poland, Texas, Japan) -- even "
+        "if a covered zone is mentioned incidentally, such as one side of a "
+        "cross-border interconnector whose primary focus is outside scope. "
+        "Answer NO for a different commodity or time period. Otherwise, if the "
+        "question is about power/outages/energy/prices in the covered zones, "
+        "answer YES even if no source below covers it -- the live tool may "
+        "still answer it.\n\n"
+        f"SOURCES:\n{ctx}\n\nQUESTION: {question}\n\nIn scope (YES/NO):"
+    )
+    try:
+        return not (complete(prompt) or "").strip().upper().startswith("NO")
+    except Exception:
+        return True
+
+
 def run_agent(question: str, conn, k: int = 6, zone: str | None = None) -> dict:
     items = retrieval.retrieve(conn, question, k=k, zone=zone)
 
     resolved = zone or next(iter(retrieval.detect_zones(question, list(config.ZONES))), None)
     zone_recognized = resolved in config.ZONES if resolved else False
 
-    if not zone_recognized:
-        # No zone signal anywhere -- fall back to the original corpus-relevance
-        # guardrail (this is what correctly refuses Texas).
+    if zone_recognized:
+        top = answer_mod.top_score(items)
+        if top >= answer_mod.RELEVANCE_HIGH:
+            pass  # strong match -- answer directly, no gate call (fast path, matches original design)
+        elif not passes_agent_relevance_gate(question, items, complete=answer_mod.llm.complete):
+            return {"answer": answer_mod.REFUSAL, "sources": [], "citations": [], "refused": True}
+        # else: weak/empty match but zone recognized and gate passed -- the
+        # live tool may still answer even though text retrieval is thin.
+    else:
         top = answer_mod.top_score(items)
         if not items or top < answer_mod.RELEVANCE_LOW:
             return {"answer": answer_mod.REFUSAL, "sources": [], "citations": [], "refused": True}
         if top < answer_mod.RELEVANCE_HIGH and not answer_mod.passes_relevance_gate(question, items, complete=answer_mod.llm.complete):
             return {"answer": answer_mod.REFUSAL, "sources": [], "citations": [], "refused": True}
-    # else: a recognized zone makes the question in-scope even with a thin/empty
-    # text corpus match -- e.g. a pure live-price question. Let the LLM decide
-    # whether to answer from retrieved context, call the tool, or both.
 
     context_text, sources = answer_mod.format_context(items)
     prompt = _build_agent_prompt(question, context_text)
@@ -144,6 +178,7 @@ def run_agent(question: str, conn, k: int = 6, zone: str | None = None) -> dict:
     messages = [SystemMessage(content="You are a precise power-market analyst."), HumanMessage(content=prompt)]
     llm = _get_llm()
     used_tool = False
+    last_tool_result = None
     answer_text = None
 
     for _ in range(MAX_HOPS):
@@ -156,6 +191,7 @@ def run_agent(question: str, conn, k: int = 6, zone: str | None = None) -> dict:
         for call in response.tool_calls:
             if call["name"] == "get_entsoe_numeric":
                 result = get_entsoe_numeric.invoke(call["args"])
+                last_tool_result = result
                 messages.append(ToolMessage(content=str(result), tool_call_id=call["id"]))
 
     if answer_text is None:
@@ -171,4 +207,5 @@ def run_agent(question: str, conn, k: int = 6, zone: str | None = None) -> dict:
         "citations": answer_mod.extract_citations(answer_text, sources),
         "refused": False,
         "used_tool": used_tool,  # not surfaced by shape_response; eval harness can read it directly
+        "tool_result": last_tool_result,
     }

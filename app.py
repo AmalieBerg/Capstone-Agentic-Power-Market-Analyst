@@ -35,6 +35,7 @@ def shape_response(question: str, result: dict) -> dict:
         "answer": result.get("answer", ""),
         "refused": result.get("refused", False),
         "used_tool": result.get("used_tool", False),
+        "tool_result": result.get("tool_result"),
         "citations": [
             {"index": c.get("index"), "label": c.get("label"),
              "zone": c.get("zone"), "source_url": c.get("source_url"),
