@@ -108,9 +108,13 @@ async function ask(){
   const q=document.getElementById('q').value.trim(); if(!q) return;
   const btn=document.getElementById('go'), ans=document.getElementById('answer'), src=document.getElementById('sources');
   btn.disabled=true; ans.className=''; ans.textContent='Thinking…'; src.innerHTML='';
+  const wakeTimer = setTimeout(() => {
+    ans.textContent = 'Still working — the server may be waking up from idle, this can take up to a minute on the first request.';
+  }, 4000);
   try{
     const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
     const d=await r.json();
+    clearTimeout(wakeTimer);
     ans.textContent=d.answer||'(no answer)';
     if(d.snippets&&d.snippets.length){
       src.innerHTML='<p class="muted">Sources:</p>';
@@ -121,7 +125,7 @@ async function ask(){
         src.appendChild(el);
       });
     }
-  }catch(e){ ans.textContent='Error: '+e; }
+  }catch(e){ clearTimeout(wakeTimer); ans.textContent='Error: '+e; }
   finally{ btn.disabled=false; }
 }
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')ask();});
