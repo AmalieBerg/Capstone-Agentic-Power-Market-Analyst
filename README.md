@@ -76,6 +76,10 @@ refusal correctness, citation recall, fact match, tool-selection correctness, an
 questions) plausibility of the returned figures. Full methodology and results in
 `doc/design-and-testing-sprint-3.md`.
 
+## Project management
+
+**Agile task board (Trello):** https://trello.com/invite/b/6a2f9ff741ca55837e1c5eed/ATTI99702564e211d26339d1080619c40b2a9E87AA51/my-capstone-trello-board
+
 ## Project structure
 
 ```
