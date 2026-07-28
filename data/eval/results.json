@@ -3,7 +3,7 @@
     {
       "id": "q01",
       "category": "structured_outage",
-      "latency": 3.0508853999781422,
+      "latency": 1.941863199999716,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -14,10 +14,10 @@
     {
       "id": "q02",
       "category": "structured_outage",
-      "latency": 4.439820499974303,
+      "latency": 2.377411999999822,
       "refusal_correct": true,
-      "citation_hit": true,
-      "fact_match": 1.0,
+      "citation_hit": false,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -25,7 +25,7 @@
     {
       "id": "q03",
       "category": "structured_outage",
-      "latency": 4.7049488999764435,
+      "latency": 2.2672900999996273,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -36,7 +36,7 @@
     {
       "id": "q04",
       "category": "structured_outage",
-      "latency": 5.566672099987045,
+      "latency": 2.713158999999905,
       "refusal_correct": true,
       "citation_hit": false,
       "fact_match": 0.5,
@@ -47,7 +47,7 @@
     {
       "id": "q05",
       "category": "structured_outage",
-      "latency": 7.338739200029522,
+      "latency": 16.730738100000053,
       "refusal_correct": true,
       "citation_hit": false,
       "fact_match": 1.0,
@@ -58,10 +58,10 @@
     {
       "id": "q06",
       "category": "structured_outage",
-      "latency": 43.35783590003848,
+      "latency": 15.589795299999423,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -69,7 +69,7 @@
     {
       "id": "q07",
       "category": "structured_outage",
-      "latency": 39.71217319997959,
+      "latency": 22.754993999999897,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -80,10 +80,10 @@
     {
       "id": "q08",
       "category": "freetext_umm",
-      "latency": 37.347995900025126,
+      "latency": 13.437929800000347,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -91,10 +91,10 @@
     {
       "id": "q09",
       "category": "freetext_umm",
-      "latency": 37.163057299971115,
+      "latency": 12.638089999999465,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -102,10 +102,10 @@
     {
       "id": "q10",
       "category": "freetext_umm",
-      "latency": 37.03260669996962,
+      "latency": 10.163804199999504,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -113,10 +113,10 @@
     {
       "id": "q11",
       "category": "freetext_umm",
-      "latency": 39.648085799999535,
+      "latency": 16.846115600000303,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -124,10 +124,10 @@
     {
       "id": "q12",
       "category": "freetext_umm",
-      "latency": 37.12559720000718,
+      "latency": 11.760134999999536,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -135,10 +135,10 @@
     {
       "id": "q13",
       "category": "freetext_umm",
-      "latency": 37.43595150002511,
+      "latency": 8.982671499999924,
       "refusal_correct": true,
       "citation_hit": false,
-      "fact_match": 0.0,
+      "fact_match": 0.6666666666666666,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -146,10 +146,10 @@
     {
       "id": "q14",
       "category": "freetext_umm",
-      "latency": 38.00929910002742,
+      "latency": 11.971987900000386,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -157,10 +157,10 @@
     {
       "id": "q15",
       "category": "cross_zonal",
-      "latency": 39.36456400004681,
+      "latency": 17.111117500000546,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 0.6666666666666666,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -168,15 +168,21 @@
     {
       "id": "q16",
       "category": "cross_zonal",
-      "error": "HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=60)"
+      "latency": 15.677347099999679,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 0.5,
+      "refused": false,
+      "tool_selection_correct": true,
+      "plausibility_pass": null
     },
     {
       "id": "q17",
       "category": "cross_zonal",
-      "latency": 37.00625749997562,
+      "latency": 13.729188899999826,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -184,20 +190,20 @@
     {
       "id": "q18",
       "category": "cross_zonal",
-      "latency": 39.30075699998997,
-      "refusal_correct": true,
+      "latency": 1.8219983999997567,
+      "refusal_correct": false,
       "citation_hit": false,
-      "fact_match": 0.0,
-      "refused": false,
+      "fact_match": 0.5,
+      "refused": true,
       "tool_selection_correct": true,
       "plausibility_pass": null
     },
     {
       "id": "q19",
       "category": "cross_zonal",
-      "latency": 38.120219699980225,
+      "latency": 7.382229699999698,
       "refusal_correct": true,
-      "citation_hit": false,
+      "citation_hit": true,
       "fact_match": 0.0,
       "refused": false,
       "tool_selection_correct": true,
@@ -206,10 +212,10 @@
     {
       "id": "q20",
       "category": "structured_outage",
-      "latency": 37.363911899970844,
+      "latency": 12.724268500000107,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -217,10 +223,10 @@
     {
       "id": "q21",
       "category": "freetext_umm",
-      "latency": 37.44576969998889,
+      "latency": 11.78685680000035,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -228,7 +234,7 @@
     {
       "id": "q22",
       "category": "cross_zonal",
-      "latency": 54.99821019999217,
+      "latency": 12.205202899999676,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -239,10 +245,10 @@
     {
       "id": "q23",
       "category": "news",
-      "latency": 37.534480899979826,
+      "latency": 9.860341399999925,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 1.0,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -250,10 +256,10 @@
     {
       "id": "q24",
       "category": "news",
-      "latency": 36.9823074999731,
+      "latency": 7.485849900000176,
       "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
+      "citation_hit": true,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -261,106 +267,112 @@
     {
       "id": "q25",
       "category": "news",
-      "latency": 39.964272500015795,
-      "refusal_correct": true,
+      "latency": 5.497389199999816,
+      "refusal_correct": false,
       "citation_hit": false,
       "fact_match": 0.0,
-      "refused": false,
+      "refused": true,
       "tool_selection_correct": true,
       "plausibility_pass": null
     },
     {
       "id": "q26",
       "category": "refusal",
-      "latency": 39.11698599997908,
-      "refusal_correct": false,
+      "latency": 5.892340099999274,
+      "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
-      "refused": false,
+      "refused": true,
       "tool_selection_correct": true,
       "plausibility_pass": null
     },
     {
       "id": "q27",
       "category": "refusal",
-      "latency": 38.76188830001047,
-      "refusal_correct": false,
+      "latency": 1.820957200000521,
+      "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
-      "refused": false,
+      "refused": true,
       "tool_selection_correct": true,
       "plausibility_pass": null
     },
     {
       "id": "q28",
       "category": "refusal",
-      "latency": 37.7405939999735,
-      "refusal_correct": false,
+      "latency": 2.8366924000001745,
+      "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
-      "refused": false,
+      "refused": true,
       "tool_selection_correct": true,
       "plausibility_pass": null
     },
     {
       "id": "q29",
       "category": "refusal",
-      "latency": 38.08440520003205,
-      "refusal_correct": false,
+      "latency": 6.5196305999998,
+      "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
-      "refused": false,
+      "refused": true,
       "tool_selection_correct": true,
       "plausibility_pass": null
     },
     {
       "id": "q30",
       "category": "refusal",
-      "error": "HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=60)"
+      "latency": 3.690099999999802,
+      "refusal_correct": true,
+      "citation_hit": true,
+      "fact_match": 1.0,
+      "refused": true,
+      "tool_selection_correct": true,
+      "plausibility_pass": null
     },
     {
       "id": "q31",
       "category": "live_numeric",
-      "latency": 38.505270200024825,
+      "latency": 27.13732439999967,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
       "refused": false,
-      "tool_selection_correct": false,
-      "plausibility_pass": false
+      "tool_selection_correct": true,
+      "plausibility_pass": true
     },
     {
       "id": "q32",
       "category": "live_numeric",
-      "latency": 37.1461941000307,
-      "refusal_correct": false,
+      "latency": 29.85696889999963,
+      "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
-      "refused": true,
-      "tool_selection_correct": false,
-      "plausibility_pass": false
+      "refused": false,
+      "tool_selection_correct": true,
+      "plausibility_pass": true
     },
     {
       "id": "q33",
       "category": "live_numeric",
-      "latency": 38.146190200001,
+      "latency": 29.033276399999522,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
       "refused": false,
-      "tool_selection_correct": false,
-      "plausibility_pass": false
+      "tool_selection_correct": true,
+      "plausibility_pass": true
     },
     {
       "id": "q34",
       "category": "live_numeric",
-      "latency": 37.10540940001374,
+      "latency": 17.435879200000272,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
       "refused": false,
-      "tool_selection_correct": false,
-      "plausibility_pass": false
+      "tool_selection_correct": true,
+      "plausibility_pass": true
     }
   ]
 }
