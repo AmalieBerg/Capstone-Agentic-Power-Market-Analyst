@@ -94,20 +94,49 @@ _PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
  #answer{white-space:pre-wrap;background:#f6f8f7;border-radius:8px;padding:1rem;min-height:2rem}
  .src{font-size:.85rem;border-left:3px solid #0b6;padding:.3rem .6rem;margin:.4rem 0;background:#fafafa}
  .muted{color:#777;font-size:.85rem}
+ .examples{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 1rem}
+ .chip{padding:.35rem .7rem;border:1px solid #0b6;border-radius:999px;background:#fff;color:#0b6;font-size:.85rem;cursor:pointer}
+ .chip:hover{background:#eafbf3}
+ .badge{display:inline-block;font-size:.75rem;font-weight:600;padding:.15rem .55rem;border-radius:999px;margin-bottom:.5rem}
+ .badge-live{background:#e6f7ff;color:#0969da}
+ .badge-corpus{background:#eafbf3;color:#0b6}
+ .badge-refused{background:#fdeded;color:#c0392b}
 </style></head><body>
 <h1>Agentic Power-Market Analyst</h1>
-<p class="muted">Ask about generation/transmission outages in DE-LU, DK1, NO2. Answers are grounded and cited.</p>
+<p class="muted">Ask about generation/transmission outages, or current prices and generation, in DE-LU, DK1, NO2. Answers are grounded and cited.</p>
+<div class="examples" id="examples">
+  <span class="chip" onclick="askExample(this)">What outages affected DE-LU in June?</span>
+  <span class="chip" onclick="askExample(this)">What's the current day-ahead price in DK1?</span>
+  <span class="chip" onclick="askExample(this)">What gas units are offline in DE-LU?</span>
+  <span class="chip" onclick="askExample(this)">How does DE-LU's current price compare to DK1?</span>
+</div>
 <div class="row">
   <input id="q" placeholder="e.g. What gas units are offline in DE-LU?" autofocus>
   <button id="go" onclick="ask()">Ask</button>
 </div>
+<div id="badge"></div>
 <div id="answer" class="muted">Answers appear here.</div>
 <div id="sources"></div>
 <script>
+function askExample(el){
+  document.getElementById('q').value = el.textContent;
+  ask();
+}
+function escapeHtml(s){
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+function formatAnswer(text){
+  let safe = escapeHtml(text);
+  safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  return safe;
+}
 async function ask(){
   const q=document.getElementById('q').value.trim(); if(!q) return;
-  const btn=document.getElementById('go'), ans=document.getElementById('answer'), src=document.getElementById('sources');
-  btn.disabled=true; ans.className=''; ans.textContent='Thinking…'; src.innerHTML='';
+  const btn=document.getElementById('go'), ans=document.getElementById('answer'),
+        src=document.getElementById('sources'), badge=document.getElementById('badge');
+  btn.disabled=true; ans.className=''; ans.textContent='Thinking…'; src.innerHTML=''; badge.innerHTML='';
   const wakeTimer = setTimeout(() => {
     ans.textContent = 'Still working — the server may be waking up from idle, this can take up to a minute on the first request.';
   }, 4000);
@@ -115,7 +144,14 @@ async function ask(){
     const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
     const d=await r.json();
     clearTimeout(wakeTimer);
-    ans.textContent=d.answer||'(no answer)';
+    ans.innerHTML = formatAnswer(d.answer || '(no answer)');
+    if(d.refused){
+      badge.innerHTML='<span class="badge badge-refused">Out of scope — refused</span>';
+    } else if(d.used_tool){
+      badge.innerHTML='<span class="badge badge-live">Live ENTSO-E data</span>';
+    } else {
+      badge.innerHTML='<span class="badge badge-corpus">Grounded in corpus</span>';
+    }
     if(d.snippets&&d.snippets.length){
       src.innerHTML='<p class="muted">Sources:</p>';
       d.snippets.forEach(s=>{
