@@ -248,6 +248,50 @@ def init_news_zone_tags_schema(conn):
         """)
     conn.commit()
 
+def init_event_news_links_schema(conn):
+    with conn.cursor() as cur:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS event_news_links (
+                event_id      TEXT NOT NULL REFERENCES events(id),
+                article_url   TEXT NOT NULL,
+                article_title TEXT,
+                source        TEXT,
+                published     TIMESTAMPTZ,
+                fetched_at    TIMESTAMPTZ DEFAULT now(),
+                PRIMARY KEY (event_id, article_url)
+            )
+        """)
+    conn.commit()
+
+
+def upsert_event_news_links(conn, rows: list[tuple]) -> int:
+    """Rows: (event_id, article_url, article_title, source, published)."""
+    if not rows:
+        return 0
+    with conn.cursor() as cur:
+        cur.executemany(
+            "INSERT INTO event_news_links "
+            "(event_id, article_url, article_title, source, published) "
+            "VALUES (%s, %s, %s, %s, %s) "
+            "ON CONFLICT (event_id, article_url) DO NOTHING",
+            rows,
+        )
+    conn.commit()
+    return len(rows)
+
+
+def events_missing_news_links(conn, event_ids: list[str]) -> list[str]:
+    """Idempotency guard: which of these events have never been enriched."""
+    if not event_ids:
+        return []
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT DISTINCT event_id FROM event_news_links WHERE event_id = ANY(%s)",
+            (event_ids,),
+        )
+        already = {r[0] for r in cur.fetchall()}
+    return [eid for eid in event_ids if eid not in already]
+
 def upsert_news_zone_tags(conn, pairs):
     if not pairs:
         return 0
