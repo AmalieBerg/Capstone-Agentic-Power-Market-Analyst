@@ -14,6 +14,7 @@ from src.index.embeddings import embed_documents
 from src.extraction.events import extract_events, events_from_structured_outages
 from src import llm
 from src.extraction.news_tags import tag_news_zones
+from src.extraction.event_news import enrich_events_with_news
 
 
 conn = db.get_connection()
@@ -68,6 +69,11 @@ else:
     print("no new free-text messages to extract", flush=True)
 
 print(f"{tag_news_zones(conn)} news zone-tag pairs", flush=True)
+
+# ---- U7.2: event -> news enrichment, live lookup, idempotent ----
+all_events = struct_events + (events if free_text else [])
+n_links = enrich_events_with_news(all_events, conn=conn)
+print(f"{n_links} event-news links added", flush=True)
 
 conn.close()
 print(">> done.", flush=True)
