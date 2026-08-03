@@ -111,6 +111,14 @@ _PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   <span class="chip" onclick="askExample(this)">How does DE-LU's current price compare to DK1?</span>
 </div>
 <div class="row">
+  <select id="zone">
+    <option value="">All zones</option>
+    <option value="DE-LU">DE-LU</option>
+    <option value="DK1">DK1</option>
+    <option value="NO2">NO2</option>
+  </select>
+</div>
+<div class="row">
   <input id="q" placeholder="e.g. What gas units are offline in DE-LU?" autofocus>
   <button id="go" onclick="ask()">Ask</button>
 </div>
@@ -141,7 +149,10 @@ async function ask(){
     ans.textContent = 'Still working — the server may be waking up from idle, this can take up to a minute on the first request.';
   }, 4000);
   try{
-    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+    const zone = document.getElementById('zone').value;
+    const body = {question: q};
+    if (zone) body.zone = zone;
+    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await r.json();
     clearTimeout(wakeTimer);
     ans.innerHTML = formatAnswer(d.answer || '(no answer)');

@@ -123,7 +123,7 @@ def _build_agent_prompt(question: str, context_text: str) -> str:
         "Answer (cite sources as [n]; label live tool data explicitly):"
     )
 
-def passes_agent_relevance_gate(question: str, items: list[dict], complete) -> bool:
+def passes_agent_relevance_gate(question: str, items: list[dict], complete, zone: str | None = None) -> bool:
     """Agent-aware scope gate: in-scope if about power/outages/energy in
     DE-LU/DK1/NO2 -- via text corpus OR the live numeric tool, even with a
     thin/empty text match. Still refuses when the question's real subject is
@@ -132,6 +132,12 @@ def passes_agent_relevance_gate(question: str, items: list[dict], complete) -> b
     ctx = "\n".join(
         f"[{i+1}] {(it.get('content') or it.get('title') or '')[:300]}"
         for i, it in enumerate(items[:5])
+    )
+    zone_note = (
+        f"The user has already selected/confirmed bidding zone {zone} for this "
+        f"question via the app's zone selector -- treat the zone as resolved, "
+        f"do not refuse merely because the question text itself doesn't name it.\n\n"
+        if zone else ""
     )
     prompt = (
         "You filter questions for a power-market assistant covering ONLY the "
@@ -146,6 +152,7 @@ def passes_agent_relevance_gate(question: str, items: list[dict], complete) -> b
         "question is about power/outages/energy/prices in the covered zones, "
         "answer YES even if no source below covers it -- the live tool may "
         "still answer it.\n\n"
+        f"{zone_note}"
         f"SOURCES:\n{ctx}\n\nQUESTION: {question}\n\nIn scope (YES/NO):"
     )
     try:
@@ -164,7 +171,7 @@ def run_agent(question: str, conn, k: int = 6, zone: str | None = None) -> dict:
         top = answer_mod.top_score(items)
         if top >= answer_mod.RELEVANCE_HIGH:
             pass  # strong match -- answer directly, no gate call (fast path, matches original design)
-        elif not passes_agent_relevance_gate(question, items, complete=answer_mod.llm.complete):
+        elif not passes_agent_relevance_gate(question, items, complete=answer_mod.llm.complete, zone=resolved):
             return {"answer": answer_mod.REFUSAL, "sources": [], "citations": [], "refused": True}
         # else: weak/empty match but zone recognized and gate passed -- the
         # live tool may still answer even though text retrieval is thin.
