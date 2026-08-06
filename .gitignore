@@ -8,10 +8,5 @@ __pycache__/
 .DS_Store
 data/snapshots/*.local
 
-browse_corpus.py
-dryrun_gate.py
-test_zone_retrieve.py
 
-calibrate_threshold.py
-diag_bands.py
 U9.5 Presentation Plan and Delivery.docx

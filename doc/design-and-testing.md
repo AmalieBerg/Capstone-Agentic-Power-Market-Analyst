@@ -203,7 +203,7 @@ gold set (§6.2) showed a single cosine threshold could not cleanly separate in-
 out-of-corpus questions — their score distributions overlap. The guardrail was rebuilt as **three
 bands** on the top retrieval score: below `RELEVANCE_LOW` (0.45) refuse with no LLM call; above
 `RELEVANCE_HIGH` (0.60) answer directly; in the ambiguous middle band an **LLM relevance gate**
-judges whether the question is in scope (correct region/commodity/time period). Output length is
+judges whether the question is in scope (correct region/commodity/time period). These specific threshold values were derived empirically, not chosen by inspection — scripts/calibrate_threshold.py runs a set of known-refusal and known-answerable questions against live retrieval, reports the maximum refusal score and minimum answerable score, and checks whether a clean separating band exists between them. Output length is
 capped; a `refused` flag is returned; and if the LLM is unavailable the request degrades to a
 clean message rather than a 500. **Sprint 3 extended this system with a tool-aware gate** for the
 agent path, so a pure live-numeric question (no text-corpus match at all) isn't wrongly refused —
