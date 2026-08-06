@@ -396,7 +396,7 @@ scoring artifact rather than a retrieval failure.
 
 ### 6.4 CI
 
-GitHub Actions installs dependencies and runs `pytest` on push/PR, plus Render auto-deploy on push
+CI was first confirmed green during Sprint 0 (U0.2), before any application code existed, and has stayed green on every push since. GitHub Actions installs dependencies and runs `pytest` on push/PR, plus Render auto-deploy on push
 (confirmed working, §3.5/U6.3). Branch protection requiring the check before merge remains an
 optional final toggle, not implemented.
 
