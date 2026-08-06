@@ -3,7 +3,7 @@
     {
       "id": "q01",
       "category": "structured_outage",
-      "latency": 2.120079599902965,
+      "latency": 12.4142004000023,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -14,7 +14,7 @@
     {
       "id": "q02",
       "category": "structured_outage",
-      "latency": 1.9614104999927804,
+      "latency": 2.0832956000231206,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -25,10 +25,10 @@
     {
       "id": "q03",
       "category": "structured_outage",
-      "latency": 2.457069500000216,
+      "latency": 1.974557299981825,
       "refusal_correct": true,
       "citation_hit": true,
-      "fact_match": 0.6666666666666666,
+      "fact_match": 0.3333333333333333,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -36,7 +36,7 @@
     {
       "id": "q04",
       "category": "structured_outage",
-      "latency": 2.8133204999612644,
+      "latency": 2.7405143000069074,
       "refusal_correct": true,
       "citation_hit": false,
       "fact_match": 0.5,
@@ -47,7 +47,7 @@
     {
       "id": "q05",
       "category": "structured_outage",
-      "latency": 12.408267799997702,
+      "latency": 14.284345499996562,
       "refusal_correct": true,
       "citation_hit": false,
       "fact_match": 1.0,
@@ -58,7 +58,7 @@
     {
       "id": "q06",
       "category": "structured_outage",
-      "latency": 19.41120089998003,
+      "latency": 18.440017699962482,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -69,7 +69,7 @@
     {
       "id": "q07",
       "category": "structured_outage",
-      "latency": 24.037547899992205,
+      "latency": 28.844292399997357,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -80,7 +80,7 @@
     {
       "id": "q08",
       "category": "freetext_umm",
-      "latency": 12.724404799984768,
+      "latency": 10.664212300034706,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -91,7 +91,7 @@
     {
       "id": "q09",
       "category": "freetext_umm",
-      "latency": 15.593979900004342,
+      "latency": 15.672212399949785,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -102,7 +102,7 @@
     {
       "id": "q10",
       "category": "freetext_umm",
-      "latency": 7.830258799949661,
+      "latency": 9.776088699989486,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -113,7 +113,7 @@
     {
       "id": "q11",
       "category": "freetext_umm",
-      "latency": 21.619809600058943,
+      "latency": 21.40821490000235,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -124,7 +124,7 @@
     {
       "id": "q12",
       "category": "freetext_umm",
-      "latency": 9.799083000048995,
+      "latency": 12.741101500054356,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -135,7 +135,7 @@
     {
       "id": "q13",
       "category": "freetext_umm",
-      "latency": 5.116139300051145,
+      "latency": 9.616977699974086,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.6666666666666666,
@@ -146,7 +146,7 @@
     {
       "id": "q14",
       "category": "freetext_umm",
-      "latency": 12.095341400010511,
+      "latency": 16.105656299972907,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -157,10 +157,10 @@
     {
       "id": "q15",
       "category": "cross_zonal",
-      "latency": 15.072515700012445,
+      "latency": 16.198402200010605,
       "refusal_correct": true,
       "citation_hit": true,
-      "fact_match": 0.6666666666666666,
+      "fact_match": 0.3333333333333333,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -168,7 +168,7 @@
     {
       "id": "q16",
       "category": "cross_zonal",
-      "latency": 20.515994800021872,
+      "latency": 19.839847899973392,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -179,7 +179,7 @@
     {
       "id": "q17",
       "category": "cross_zonal",
-      "latency": 13.158059100038372,
+      "latency": 16.531807699997444,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -190,7 +190,7 @@
     {
       "id": "q18",
       "category": "cross_zonal",
-      "latency": 4.771043900051154,
+      "latency": 5.928366200008895,
       "refusal_correct": false,
       "citation_hit": false,
       "fact_match": 0.5,
@@ -201,7 +201,7 @@
     {
       "id": "q19",
       "category": "cross_zonal",
-      "latency": 14.229425099911168,
+      "latency": 19.723648999992292,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.0,
@@ -212,10 +212,10 @@
     {
       "id": "q20",
       "category": "structured_outage",
-      "latency": 12.085792199941352,
+      "latency": 14.04220730002271,
       "refusal_correct": true,
       "citation_hit": true,
-      "fact_match": 1.0,
+      "fact_match": 0.5,
       "refused": false,
       "tool_selection_correct": true,
       "plausibility_pass": null
@@ -223,7 +223,7 @@
     {
       "id": "q21",
       "category": "freetext_umm",
-      "latency": 14.081555100041442,
+      "latency": 15.162051399995107,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -234,7 +234,7 @@
     {
       "id": "q22",
       "category": "cross_zonal",
-      "latency": 9.758062500040978,
+      "latency": 12.870481399993878,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -245,7 +245,7 @@
     {
       "id": "q23",
       "category": "news",
-      "latency": 8.745680200052448,
+      "latency": 12.163624000037089,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -256,7 +256,7 @@
     {
       "id": "q24",
       "category": "news",
-      "latency": 7.496955699985847,
+      "latency": 8.19378480000887,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -267,7 +267,7 @@
     {
       "id": "q25",
       "category": "news",
-      "latency": 22.010435500065796,
+      "latency": 13.42717719997745,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 0.5,
@@ -278,7 +278,7 @@
     {
       "id": "q26",
       "category": "refusal",
-      "latency": 6.997303699958138,
+      "latency": 8.713402200024575,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -289,7 +289,7 @@
     {
       "id": "q27",
       "category": "refusal",
-      "latency": 2.3937498000450432,
+      "latency": 4.705628100025933,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -300,7 +300,7 @@
     {
       "id": "q28",
       "category": "refusal",
-      "latency": 8.934845000039786,
+      "latency": 5.933177799975965,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -311,7 +311,7 @@
     {
       "id": "q29",
       "category": "refusal",
-      "latency": 5.691602999926545,
+      "latency": 5.641233299975283,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -322,7 +322,7 @@
     {
       "id": "q30",
       "category": "refusal",
-      "latency": 1.619439800037071,
+      "latency": 4.638678100018296,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -333,7 +333,7 @@
     {
       "id": "q31",
       "category": "live_numeric",
-      "latency": 29.6811686999863,
+      "latency": 36.18768289999571,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -344,7 +344,7 @@
     {
       "id": "q32",
       "category": "live_numeric",
-      "latency": 29.294258399982937,
+      "latency": 38.194153999967966,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -355,7 +355,7 @@
     {
       "id": "q33",
       "category": "live_numeric",
-      "latency": 25.991900200024247,
+      "latency": 31.368336600018665,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,
@@ -366,40 +366,7 @@
     {
       "id": "q34",
       "category": "live_numeric",
-      "latency": 29.06336290005129,
-      "refusal_correct": true,
-      "citation_hit": true,
-      "fact_match": 1.0,
-      "refused": false,
-      "tool_selection_correct": true,
-      "plausibility_pass": true
-    },
-    {
-      "id": "q35",
-      "category": "structured_outage",
-      "latency": 1.5711455999407917,
-      "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.5,
-      "refused": false,
-      "tool_selection_correct": true,
-      "plausibility_pass": null
-    },
-    {
-      "id": "q36",
-      "category": "freetext_umm",
-      "latency": 1.9148904000176117,
-      "refusal_correct": true,
-      "citation_hit": false,
-      "fact_match": 0.0,
-      "refused": false,
-      "tool_selection_correct": true,
-      "plausibility_pass": null
-    },
-    {
-      "id": "q37",
-      "category": "live_numeric",
-      "latency": 38.263144699973054,
+      "latency": 27.444184499967378,
       "refusal_correct": true,
       "citation_hit": true,
       "fact_match": 1.0,

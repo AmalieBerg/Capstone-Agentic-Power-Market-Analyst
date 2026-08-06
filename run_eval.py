@@ -136,14 +136,14 @@ def judge_groundedness(question: str, answer: str, snippets: list[dict]) -> floa
         return None
 
 
-def run(url: str, gold: list[dict], mode: str, judge: bool) -> dict:
+def run(url: str, gold: list[dict], mode: str, judge: bool, k: int = 6) -> dict:
     """mode: 'explicit' passes gold zone; 'inferred' passes no zone."""
     rows = []
     asset_map = load_asset_map()
     for g in gold:
         zone = g.get("zone") if mode == "explicit" else None
         try:
-            resp, dt = ask(url, g["question"], zone)
+            resp, dt = ask(url, g["question"], zone, k=k)
         except Exception as e:
             rows.append({"id": g["id"], "category": g["category"], "error": str(e)})
             continue
@@ -219,6 +219,7 @@ def main():
     ap.add_argument("--gold", default="data/eval/gold.jsonl")
     ap.add_argument("--judge", action="store_true")
     ap.add_argument("--mode", choices=["explicit", "inferred", "both"], default="both")
+    ap.add_argument("--k", type=int, default=6)
     args = ap.parse_args()
 
     gold = load_gold(args.gold)
@@ -228,7 +229,7 @@ def main():
     modes = ["explicit", "inferred"] if args.mode == "both" else [args.mode]
     results = {}
     for m in modes:
-        results[m] = run(args.url, gold, m, args.judge)
+        results[m] = run(args.url, gold, m, args.judge, k=args.k)
 
     # persist raw rows for the write-up
     out = "data/eval/results.json"

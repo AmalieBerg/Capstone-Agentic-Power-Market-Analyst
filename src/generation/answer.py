@@ -13,6 +13,7 @@ import re
 
 from src.index import retrieval
 from src import llm
+import config
 
 _CITE = re.compile(r"[\[【](\d+)[\]】]")
 
@@ -27,7 +28,7 @@ MAX_ANSWER_CHARS = 1500  # hard backstop on output length
 REFUSAL = (
     "I don't have information about that in my power-market corpus. I can answer "
     "questions about generation and transmission outages (asset, capacity, fuel, "
-    "timing) for the DE-LU, DK1, and NO2 bidding zones."
+    f"timing) for the {', '.join(config.ZONES)} bidding zones."
 )
 
 
@@ -51,20 +52,19 @@ def passes_relevance_gate(question: str, items: list[dict], complete) -> bool:
     """Ambiguous-band gate: refuse only if the question is clearly OUTSIDE scope
     (different region/commodity/time), not merely because the snippets are a
     partial answer. Scope = generation/transmission outages & power news for
-    DE-LU, DK1, NO2."""
+    the configured bidding zones."""
     ctx = "\n".join(
         f"[{i+1}] {(it.get('content') or it.get('title') or '')[:300]}"
         for i, it in enumerate(items[:5])
     )
+    zone_list = ", ".join(config.ZONES)
     prompt = (
-        "You filter questions for a power-market assistant covering the DE-LU, DK1, "
-        "and NO2 bidding zones (Germany/Luxembourg, West Denmark, South Norway) and "
-        "the mid-2026 period. Answer NO only if the question is clearly OUT OF SCOPE: "
-        "a different region (e.g. Texas, Japan, Poland), a different commodity "
-        "(e.g. crypto, oil futures), or a different time period (e.g. 2023). "
-        "If the question is about power/outages/energy in the covered zones and the "
-        "sources are at all related, answer YES even if they only partially answer it. "
-        "Reply with ONLY 'YES' or 'NO'.\n\n"
+        f"You filter questions for a power-market assistant covering the {zone_list} "
+        "bidding zones. Answer NO if the question's main subject is a different "
+        "region, a different commodity, or a different time period than what the "
+        "sources below cover. Answer YES if the question is about power/outages/"
+        "energy in the covered zones, even if the sources only partially answer "
+        "it.\n\n"
         f"SOURCES:\n{ctx}\n\nQUESTION: {question}\n\nIn scope (YES/NO):"
     )
     try:

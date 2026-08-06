@@ -60,6 +60,7 @@ ZONES = {
     },
     "DK1": {"entsoe_area": "DK_1", "eic": "10YDK-1--------W"},
     "NO2": {"entsoe_area": "NO_2", "eic": "10YNO-2--------T"},
+    "SE3": {"entsoe_area": "SE_3", "eic": "10Y1001A1001A46L"},
 }
 
 # RETIRED ON 2nd of July and replaced by GEO_TERMS below. Keep for reference until the end of the project: 
@@ -92,6 +93,11 @@ GEO_TERMS = {
         "names": ["norway", "norwegian", "norge", "southern norway", "south norway"],
         "tso":   ["statnett"],
         "codes": ["no2"],
+    },
+        "SE3": {
+        "names": ["sweden", "swedish", "sverige", "central sweden"],
+        "tso":   ["svenska kraftnät", "svenska kraftnat", "svk"],
+        "codes": ["se3"],
     },
 }
 
@@ -184,6 +190,19 @@ OUTAGE_FEEDS = [
             "&limit=100"
         ),
     },
+    {
+        "zone": "SE3",
+        "source": "nordpool_umm",
+        "url": (
+            "https://ummrss.nordpoolgroup.com/messages/"
+            "?messageTypes=1&messageTypes=2&messageTypes=3&messageTypes=4"
+            "&areas=10Y1001A1001A46L"
+            "&publicationStartDate=1969-12-31T23%3A00%3A00.000Z"
+            "&eventStartDate=2026-06-15T22%3A00%3A00.000Z"
+            "&eventStopDate=2026-06-22T21%3A59%3A59.999Z"
+            "&limit=100"
+        ),
+    },
     {"format": "remit_xml", "zone_from": "content", "source": "iip_de",
      "url": "https://platform.inside-information.de/electricity/electricity/atom"},
 ]
@@ -213,4 +232,6 @@ NEWS_FEEDS = [
     {"zone": "DE-LU", "source": "guardian", "format": "guardian", "query": "Germany energy", "section": "environment"},
     {"zone": "DK1",   "source": "guardian", "format": "guardian", "query": "Denmark electricity wind"},
     {"zone": "NO2",   "source": "guardian", "format": "guardian", "query": "Norway electricity power"},
+    {"zone": "SE3",   "source": "gnews", "url": _gnews("Sweden electricity power price hydropower nuclear when:7d")},
+    {"zone": "SE3",   "source": "guardian", "format": "guardian", "query": "Sweden electricity power"},
 ]

@@ -124,11 +124,7 @@ def _build_agent_prompt(question: str, context_text: str) -> str:
     )
 
 def passes_agent_relevance_gate(question: str, items: list[dict], complete, zone: str | None = None) -> bool:
-    """Agent-aware scope gate: in-scope if about power/outages/energy in
-    DE-LU/DK1/NO2 -- via text corpus OR the live numeric tool, even with a
-    thin/empty text match. Still refuses when the question's real subject is
-    outside the covered zones, even if a covered zone is mentioned
-    incidentally (e.g. one side of a cross-border interconnector)."""
+    """..."""
     ctx = "\n".join(
         f"[{i+1}] {(it.get('content') or it.get('title') or '')[:300]}"
         for i, it in enumerate(items[:5])
@@ -139,14 +135,14 @@ def passes_agent_relevance_gate(question: str, items: list[dict], complete, zone
         f"do not refuse merely because the question text itself doesn't name it.\n\n"
         if zone else ""
     )
+    zone_list = ", ".join(config.ZONES)
     prompt = (
-        "You filter questions for a power-market assistant covering ONLY the "
-        "DE-LU, DK1, and NO2 bidding zones (Germany/Luxembourg, West Denmark, "
-        "South Norway) for mid-2026, with access to historical outage/news "
-        "sources AND a live tool for current price/generation/load/wind-solar "
-        "figures in those zones. Answer NO if the question's main subject is a "
-        "different region not in this list (e.g. Poland, Texas, Japan) -- even "
-        "if a covered zone is mentioned incidentally, such as one side of a "
+        f"You filter questions for a power-market assistant covering ONLY the "
+        f"{zone_list} bidding zones for mid-2026, with access to historical "
+        "outage/news sources AND a live tool for current price/generation/"
+        "load/wind-solar figures in those zones. Answer NO if the question's "
+        "main subject is a different region not in this list -- even if a "
+        "covered zone is mentioned incidentally, such as one side of a "
         "cross-border interconnector whose primary focus is outside scope. "
         "Answer NO for a different commodity or time period. Otherwise, if the "
         "question is about power/outages/energy/prices in the covered zones, "

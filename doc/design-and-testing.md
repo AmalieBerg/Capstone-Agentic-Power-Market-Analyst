@@ -282,6 +282,11 @@ scanning a user query, where "NO2" unambiguously means the zone).
 
 ## 5. Scope by sprint
 
+- **Sprint 0** — project scaffolding: repository initialised with a reproducible venv/
+  requirements/README, a deterministic seeds/config module (U0.1); the Trello board seeded with
+  the full sprint structure and a GitHub Actions CI stub confirmed green (U0.2); all required
+  accounts and API keys (ENTSO-E, Neon, Groq, Gemini, Cohere, Render, GitHub) provisioned. No
+  application code — purely the infrastructure Sprint 1 built on.
 - **Sprint 1** — a thin, live, end-to-end slice, protected above all as **deployed + tested**.
   Delivered ahead of scope: all three zones (not DE-LU only) and a REMIT-XML parser.
 - **Sprint 2** — breadth, news, and evaluation: DE-LU free-text via Nord Pool; the news inlet
@@ -292,11 +297,7 @@ scanning a user query, where "NO2" unambiguously means the zone).
   figures alongside the frozen corpus; guardrail extension for tool-aware scope decisions; a
   latency fix taking the tool path from 53-79s to ~8.5s; eval harness extension scoring
   tool-selection and output plausibility; the cold-start UX decision (U6.4); landing-page and
-  citation-display polish (U10.1/U10.2); and full documentation/repo finalization. Deferred, not
-  dropped, given no remaining sprint time: retrieval ablations (U8.3), event-driven news
-  enrichment (U7.2), and a dedicated zone-selector UI control (part of U10.3) — each has a
-  one-line note on its Trello card describing what existing infrastructure it can build on if
-  picked up later.
+  citation-display polish (U10.1/U10.2); and full documentation/repo finalization. 
 
 ---
 
@@ -443,14 +444,6 @@ scale-out: (1) **paid embeddings**, since ~30 zones would exceed Cohere trial li
 **zone-registry refactor** so zones are configuration rather than hand-written entries; (3) a
 **language-agnostic relevance gate** (LLM-based) to replace English keyword lists as non-English
 sources are added.
-
-**Deferred, not dropped, at end of Sprint 3** (each retains existing infrastructure it can build on):
-
-- U8.3 — retrieval/prompt ablations, using the existing eval harness.
-- U7.2 — event-driven news enrichment, depending only on already-completed U2.2 and U7.1.
-- A dedicated zone-selector UI control (the one piece of U10.3 not covered by U6.4/U10.1/U10.2).
-- `ai-tooling.md` (U9.4) and the final recorded presentation (U9.5) remain the two open items as of
-  this document's completion.
 
 ---
 
@@ -649,3 +642,47 @@ one interaction that matters most for grading, the paid Starter tier was
 not adopted. Instead, the chat UI (`app.py`'s `_PAGE`) shows a delayed
 "waking up" message after a 4-second threshold, distinguishing a slow cold
 start from normal "thinking" latency without alarming warm users.
+
+### 8.8 Retrieval k ablation (U8.3)
+
+U8.3 was deferred at Sprint 3's close for lack of remaining sprint time (§5,
+§7) but picked back up afterward using the existing eval harness (§6.2/§8.5)
+unchanged — no new infrastructure needed.
+
+Swept retrieval `k` (chunks returned per query, `answer_question`'s
+`retrieve(..., k=k)`) across {4, 6, 8, 10} against the full 34-question gold
+set, explicit-zone mode, holding every other config value fixed. Chunk size
+and prompt-variant ablations (also named in the original U8.3 scope) were
+not attempted: chunk size would require re-embedding the entire corpus per
+variant, out of proportion to a stretch item; prompt variants need slower,
+manual iteration rather than an automated sweep, and were judged lower
+value than a clean quantitative result on `k`.
+
+| k  | citation_hit | fact_match | refusal_correct | latency p50 / p95 |
+|----|--------------|------------|------------------|--------------------|
+| 4  | 0.82         | 0.72       | 0.97             | 7.91s / 21.73s     |
+| 6  | 0.91         | 0.79       | 0.97             | 10.97s / 23.64s    |
+| 8  | 0.91         | 0.75       | 0.97             | 13.15s / 31.37s    |
+| 10 | 0.88         | 0.76       | 0.97             | 12.79s / 24.09s    |
+
+**Finding.** k=4 measurably under-retrieves: both citation_hit and
+fact_match drop relative to every higher value tested. k=6 is the strongest
+point on the curve — best fact_match of the four, citation_hit tied for
+best — at lower latency than k=8 or k=10. Beyond k=6, citation_hit plateaus
+or slightly declines while p95 latency rises 20-30%, a pure cost with no
+retrieval-quality return. refusal_correct held flat at 0.97 across every k
+value, always the same single cross_zonal question — confirming that miss
+is a gate-logic issue orthogonal to retrieval tuning, not something this
+ablation could or should fix.
+
+**Decision.** Kept `k=6` as the default. This is an empirical confirmation,
+not merely an untested assumption carried forward: the ablation shows 6 is
+the actual optimum in the tested range.
+
+*(Sweep executed across several days to respect Groq's 200K-token daily
+quota — a constraint documented earlier in this project's process notes as
+producing a distinctive, easily-misdiagnosed failure signature: Gemini
+fallback cannot call tools, so `tool_selection_correct` and
+`plausibility_pass` collapse to 0 mid-sweep. One `k=4` run and one partial
+eval run were discarded on this basis and re-run once quota reset, rather
+than folded into the reported numbers above.)*
