@@ -369,7 +369,7 @@ methodology in §8.5.
 | Groundedness (LLM-judged, n=24) | 0.78 |
 | Latency p50 / p95 | 0.9 s / 9.2 s |
 
-**Sprint 3 final (34-question set, explicit-zone run, post agent-layer fixes — full account in §8.6):**
+**Sprint 3 final (37-question set, explicit-zone run, post agent-layer fixes — full account in §8.6):**
 
 | Metric | Value |
 |---|---|
